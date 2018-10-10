@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-navbar color="dark">
+    <ion-title>Elegir {{selectPoint}} {{estado}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div id="map_canvas" #map_canvas>
+
+    <ion-fab right bottom>
+      <button ion-fab color="light"><ion-icon name="arrow-dropleft"></ion-icon></button>
+      <ion-fab-list side="left">
+        <button ion-fab (click)="onFindLocation()" *ngIf="!elegirDestino"><ion-icon name="pin"></ion-icon></button>
+        <button ion-fab (click)="setUbicacion()"><ion-icon name="checkmark-circle"></ion-icon></button>
+      </ion-fab-list>
+    </ion-fab>
+    
+    <ion-list *ngIf="elegirDestino">
+      <ion-item>
+        <input type="text" ion-input #address class="text-input text-input-md" >
+      </ion-item>
+      <ion-item>
+        <button ion-button block (click)="onEstablishAddress($event)">Buscar</button>
+      </ion-item>
+    </ion-list>
+
+  </div>
+</ion-content>

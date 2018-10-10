@@ -1,0 +1,57 @@
+<ion-header>
+
+   <ion-navbar color="dark">
+    <ion-title>{{ item.name }}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <div class="item-profile" text-center #profilePic [style.background-image]="'url(' + item.profilePic + ')'">
+  </div>
+
+  <!--<div class="item-detail" padding>
+    <h2>{{item.name}}</h2>
+    <p>{{item.about}}</p>
+  </div>-->
+
+  <ion-list>
+    <!-- Item with an avatar on the left and button on the right -->
+    <ion-item>
+      <ion-avatar item-start>
+        <img [src]="item.profilePic">
+      </ion-avatar>
+     {{item.name}}
+      <button ion-button outline item-end (click)="setCarro(item)">Elegir</button>
+    </ion-item>
+
+    <!-- Item with a thumbnail on the right -->
+    <ion-item>
+      <h2>Atos 2017 Verde</h2>
+      <p>{{item.about}}</p>
+      <ion-thumbnail item-end>
+        <img src="../../assets/imgs/bg-car2.jpg">
+      </ion-thumbnail>
+    </ion-item>
+
+    <ion-item>
+      <ion-row>
+        <ion-col>
+          <button ion-button color="primary" clear small icon-start>
+              <ion-icon name='ios-star-outline'> </ion-icon>
+                5
+            </button>
+        </ion-col>
+        <ion-col text-right>
+          <button ion-button color="primary" clear small icon-start>
+              <ion-icon name='text'></ion-icon>
+              4 Comentarios
+            </button>
+        </ion-col>
+      </ion-row>
+    </ion-item>
+  </ion-list>
+
+
+</ion-content>

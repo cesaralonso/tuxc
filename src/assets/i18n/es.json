@@ -1,0 +1,58 @@
+{
+  "NAME": "Nombre",
+  "PASSWORD": "Contraseña",
+  "EMAIL": "Email",
+  "LOGIN": "Iniciar sesión",
+  "SIGNUP": "Registrarse",
+
+  "TAB1_TITLE": "Choferes",
+  "TAB2_TITLE": "Buscar",
+  "TAB3_TITLE": "Ajustes",
+
+  "MAP_TITLE": "Mapa",
+
+  "TUTORIAL_SLIDE1_TITLE": "Bienvenido/a a TUXCARS",
+  "TUTORIAL_SLIDE1_DESCRIPTION": "TUXCAR es un app de viajes compartidos para viajar en forma rápida y confiable en tan solo minutos, de día o de noche",
+
+  "TUTORIAL_SLIDE2_TITLE": "Selecciona el origen de partida",
+  "TUTORIAL_SLIDE2_DESCRIPTION": "Selecciona la ubicación de la cual deseas partir",
+
+  "TUTORIAL_SLIDE3_TITLE": "Elige tu destino",
+  "TUTORIAL_SLIDE3_DESCRIPTION": "Elige en el mapa el lugar al cual te dirijes.",
+
+  "TUTORIAL_SLIDE4_TITLE": "Elige el vehiculo de tu preferencia.",
+  "TUTORIAL_SLIDE4_DESCRIPTION": "Elige el que más te agrade.",
+
+  "TUTORIAL_SLIDE5_TITLE": "Disfruta",
+  "TUTORIAL_SLIDE5_DESCRIPTION": "Disfruta de tu viaje y siguelo por el mapa.",
+
+  
+  "TUTORIAL_SLIDE6_TITLE": "¡PULSA EL BOTÓN PEDIR PARA COMENZAR!.",
+  
+
+  "SETTINGS_TITLE": "Ajustes",
+  "SETTINGS_OPTION1": "Opción 1",
+  "SETTINGS_OPTION2": "Opción 2",
+  "SETTINGS_OPTION3": "Opción 3",
+  "SETTINGS_OPTION4": "Opción 4",
+
+  "SETTINGS_PAGE_PROFILE": "Editar Perfil",
+
+  "WELCOME_TITLE": "Bienvenido/a",
+
+  "LOGIN_TITLE": "Iniciar sesión",
+  "LOGIN_ERROR": "No se ha podido iniciar sesión. Por favor revisa la información de la cuenta e inténtalo de nuevo.",
+  "LOGIN_BUTTON": "Iniciar sesión",
+  "SIGNUP_TITLE": "Registro",
+  "SIGNUP_ERROR": "No se ha podido crear la cuenta. Por favor revisa la información de la cuenta e inténtalo de nuevo.",
+  "SIGNUP_BUTTON": "Registrarse",
+
+  "LIST_MASTER_TITLE": "Items",
+
+  "ITEM_CREATE_TITLE": "Nuevo Item",
+  "ITEM_CREATE_CHOOSE_IMAGE": "Añadir Imagen",
+
+  "CARDS_TITLE": "Social",
+
+  "SEARCH_TITLE": "Buscar"
+}

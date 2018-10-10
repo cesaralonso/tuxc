@@ -1,0 +1,65 @@
+<!--
+  Generated template for the ViajePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+   <ion-navbar color="dark">
+    <ion-title>Viaje</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+  <ion-list>
+    <ion-item>
+      <h2>Conductor</h2>
+    </ion-item>
+    <ion-item-sliding>
+      <button ion-item (click)="goTo('ListMasterPage')">
+        <ion-avatar item-start>
+          <img [src]="'../../' + condPic" />
+        </ion-avatar>
+        <h2>{{condName}}</h2>
+        <p>{{condAbout}}</p>
+        <p>341 125 22 07</p>
+        
+        <h2>Atos 2017 Verde</h2>
+        <ion-thumbnail item-end>
+          <img src="../../assets/imgs/bg-car2.jpg">
+        </ion-thumbnail>
+      </button>
+      <ion-item-options>
+        <button ion-button (click)="iniciarViaje()">
+          REPORTAR
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+    
+
+    <ion-item>
+      <h2>Origen</h2>
+    </ion-item>
+
+    <ion-item>
+      <p> {{origAddress}} </p>
+    </ion-item>
+
+    <ion-item>
+      <h2>Destino</h2>
+    </ion-item>
+
+    <ion-item>
+      <p> {{destAddress}} </p>
+    </ion-item>
+
+  </ion-list>
+  
+  <button ion-button block  (click)="iniciarViaje()">Iniciar Viaje</button>
+  <button ion-button color="default" block>Cobrar</button>
+  <button ion-button color="danger" (click)="goTo('MapPage')" block>Cancelar / Rechazar</button>
+</ion-content>
