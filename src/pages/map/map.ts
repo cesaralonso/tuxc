@@ -1,3 +1,4 @@
+import { EligeCarroPage } from './../elige-carro/elige-carro';
 import { MapService } from './map.service';
 import { Settings } from './../../providers/settings/settings';
 import {
@@ -30,18 +31,19 @@ export class MapPage {
   loading: any;
   loading_wait: any;
 
-  origen: ILatLng;
+  posicion: ILatLng;
   _origen: ILatLng;
+  _destino: ILatLng;
   dataStorage: any = {};
 
   elegirDestino: boolean = false;
-  origenSeteado: boolean = false;
+  posicionSeteado: boolean = false;
   destinoSeteado: boolean = false;
 
   selectPoint: string = 'Origen';
-  strAddress: any = '';
 
-  _strAddress: any = '';
+  _strAddressDestino: any = '';
+  _strAddressOrigen: any = '';
 
   estado: string = 'Inicia';
 
@@ -56,11 +58,11 @@ export class MapPage {
     private settings: Settings,
     private mapService: MapService) {
     
-      if (this.origenSeteado && !this.destinoSeteado) {
+      if (this.posicionSeteado && !this.destinoSeteado) {
         this.selectPoint = 'Destino';
       }
 
-      if (this.origenSeteado && this.destinoSeteado) {
+      if (this.posicionSeteado && this.destinoSeteado) {
         this.selectPoint = 'Finalizado';
       }
 
@@ -92,8 +94,8 @@ export class MapPage {
     let mapOptions: GoogleMapOptions = {
       'controls': {
         'compass': false,
-        'myLocationButton': false,
-        'myLocation': false,
+        'myLocationButton': true,
+        'myLocation': true,
         'indoorPicker': false,
         'zoom': false,
         'mapTypeControl': false,
@@ -112,20 +114,15 @@ export class MapPage {
     this.map = GoogleMaps.create('map_canvas', mapOptions);
   }
 
-  calculateAndDisplayRoute(origen, destino) {
-    console.log('__origen',JSON.stringify(origen));
-    console.log('__destino', JSON.stringify(destino));
-    this.mapService.calculateRute(origen, destino)
-      .subscribe(result => {
-        console.log('result form api servicec', JSON.stringify(result));
-      });
-  }
-
+  // Establece una dirección de destino despues de haber ya posicionado un origen
   onEstablishAddress(event) {
+    // Presenta loading
     this.loading_wait.present();
+    // Limpia Mapa
     this.map.clear();
 
-    // Address -> latitude,longitude
+    // Address -> latitude, longitude
+    // Toma el valor del input de la vista para sacar la información de la dirección
     Geocoder.geocode({
       "address": this.address.nativeElement.value
     })
@@ -136,9 +133,14 @@ export class MapPage {
         return null;
       }
 
+      // Cierra el loading
       this.loading_wait.dismiss();
 
-      this.strAddress = [
+      // latLng destino
+      this._destino = results[0].position;
+
+      // Cadena con la dirección completa de destino
+      this._strAddressDestino = [
         results[0].subThoroughfare || "",
         results[0].thoroughfare || "",
         results[0].locality || "",
@@ -146,56 +148,71 @@ export class MapPage {
         results[0].postalCode || "",
         results[0].country || ""].join(", ");
 
-      /** POLYLINE solo de porueba pero no se incluirá */
-
-      const DIR_ORIGEN = this._strAddress;
-      const DIR_DESTINO = this.strAddress;
-
-
-        const ORIGEN = {'lat': this._origen.lat, 'lng': this._origen.lng};
-        const DESTINO =  {'lat': results[0].position.lat, 'lng':  results[0].position.lng};
-        const RUTA = [
-          ORIGEN,
-          DESTINO
-        ];
-
-        let polyline: Polyline = this.map.addPolylineSync({
-          points: RUTA,
-          color: '#AA00FF',
-          width: 10,
-          geodesic: true,
-          clickable: true  // clickable = false in default
-        });
-
-        polyline.on(GoogleMapsEvent.POLYLINE_CLICK).subscribe((params: any) => {
+      // POLYLINE solo de prueba, no se incluirá en la aplicación
+      const ORIGEN = {'lat': this._origen.lat, 'lng': this._origen.lng};
+      const DESTINO =  {'lat': this._destino.lat, 'lng': this._destino.lng};
+      const RUTA = [
+        ORIGEN,
+        DESTINO
+      ];
+      let polyline: Polyline = this.map.addPolylineSync({
+        points: RUTA,
+        color: '#AA00FF',
+        width: 10,
+        geodesic: true,
+        clickable: true  // clickable = false in default
+      });
+      polyline.on(GoogleMapsEvent.POLYLINE_CLICK).subscribe((params: any) => {
         let position: LatLng = <LatLng>params[0];
-
         let marker: Marker = this.map.addMarkerSync({
           position: position,
           title: position.toUrlValue(),
           disableAutoPan: true,
-          snippet: this.strAddress,
+          snippet: this._strAddressDestino,
           animation: GoogleMapsAnimation.BOUNCE
         });
         marker.showInfoWindow();
       });
 
+      // Esto es para mandar a función para obtener la ruta a seguir, por el momento no se va a utilizar..
+      const DIR_ORIGEN = this._strAddressOrigen;
+      const DIR_DESTINO = this._strAddressDestino;
       this.calculateAndDisplayRoute(DIR_ORIGEN, DIR_DESTINO);
 
-      this.origen = results[0].position;
+      this.posicion = results[0].position;
     });
   }
 
+  // Posiciona la posición de origen
   onFindLocation(e) {
+    // Presenta loading
     this.loading_wait.present();
+    // Limpia Mapa
     this.map.clear();
 
     // Get the location of you
     this.map.getMyLocation()
       .then((location: MyLocation) => {
 
-        console.log('location', JSON.stringify(location, null ,2));
+        /**
+         * location tiene: 
+         * {
+         * "latLng":
+         * {
+         * "lat":19.6989371,
+         * "lng":-103.4797342},
+         * "elapsedRealtimeNanos":152568973411755,
+         * "time":1539296923000,
+         * "accuracy":40.659000396728516,
+         * "altitude":1511,
+         * "speed":0,
+         * "provider":"fused",
+         * "hashCode":203174665,
+         * "status":true
+         * }
+         */
 
+        // Cierra loading
         this.loading_wait.dismiss();
 
         // Move the map camera to the location with animation
@@ -208,6 +225,7 @@ export class MapPage {
         })
         .then(() => {
 
+          // Obtiene la información de una posición (calle, localidad, estado, etc..)
           Geocoder.geocode({
               "position": location.latLng
             })
@@ -218,7 +236,8 @@ export class MapPage {
                 return null;
               }
 
-              this.strAddress = [
+              // Cadena con la dirección completa de origen
+              let strAddress = [
                 results[0].subThoroughfare || "",
                 results[0].thoroughfare || "",
                 results[0].locality || "",
@@ -226,17 +245,20 @@ export class MapPage {
                 results[0].postalCode || "",
                 results[0].country || ""].join(", ");
 
-              this._strAddress = this.strAddress;
+              // Paso la dirección a una copia por que despues de volverá a setear strAddress
+              this._strAddressOrigen = strAddress;
 
+              // origen es establecido con la posición (coordenada)
+              this.posicion = location.latLng;
 
-              this.origen = location.latLng;
+              // latLng origen
               this._origen =  location.latLng;
 
               // add a marker
               let marker: Marker = this.map.addMarkerSync({
                 title: 'Tu te encuentras aquí',
-                snippet: this.strAddress,
-                position: location.latLng,
+                snippet: this._strAddressOrigen,
+                position: this._origen,
                 animation: GoogleMapsAnimation.BOUNCE
               });
 
@@ -247,30 +269,18 @@ export class MapPage {
               marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
                 this.showToast('Esta es la tu ubicación');
               });
-
-
-            })
-
+            });
         });
       });
   }
 
-  showToast(message: string) {
-    let toast = this.toastCtrl.create({
-      message: message,
-      duration: 2000,
-      position: 'top'
-    });
-
-    toast.present(toast);
-  }
-
   setUbicacion() {
-
+    // Limpia Mapa
     this.map.clear();
-    
-    if (!this.origenSeteado) {
 
+    if (!this.posicionSeteado) {
+
+      // Origen
       this.loading = this.loadingCtrl.create({
         content: 'Ahora elige el destino'
       });
@@ -279,19 +289,19 @@ export class MapPage {
       this.selectPoint = 'Destino';
       this.elegirDestino = true;
 
-      if (this.origen !== undefined) {
-        console.log('origen');
-        this.origen['address'] = this.strAddress;
-        this.strAddress = '';
-        this.settings.setValue('origen', this.origen);
-        this.origenSeteado = true;
-        this.origen = null;
+      if (this.posicion !== undefined) {
+        this.posicion['address'] = this._strAddressOrigen;
+        this._strAddressOrigen = '';
+        this.settings.setValue('origen', this.posicion);
+        this.posicionSeteado = true;
+        this.posicion = null;
       } else {
         console.log('Error al setear origen');
       }
 
-    } else if (this.origenSeteado && !this.destinoSeteado) {
+    } else if (this.posicionSeteado && !this.destinoSeteado) {
 
+      // Destino
       this.loading = this.loadingCtrl.create({
         content: 'Ahora elige un carro'
       });
@@ -299,28 +309,48 @@ export class MapPage {
       this.loading.dismiss();
       this.selectPoint = 'Carro';
 
-      if (this.origen !== undefined) {
-        console.log('destino');
-        this.origen['address'] = this.strAddress;
-        this.strAddress = '';
-        this.settings.setValue('destino', this.origen);
+      if (this.posicion !== undefined) {
+        this.posicion['address'] = this._strAddressDestino;
+        this._strAddressDestino = '';
+        this.settings.setValue('destino', this.posicion);
         this.destinoSeteado = true;
-        this.origen = null;
+        this.posicion = null;
         this.navCtrl.push('ListMasterPage');
       } else {
         console.log('Error al setear destino');
       }
-    } else if (this.origenSeteado && this.destinoSeteado) {
+    } else if (this.posicionSeteado && this.destinoSeteado) {
+
+      // Seteado Origen y Destino envía a pantalla de Selección de EligeCarroPage
+      // Aqui es el momento para enviar a Firebase
       this.loading = this.loadingCtrl.create({
         content: 'Solo elige un carro'
       });
       this.loading.present();
       this.loading.dismiss();
       this.selectPoint = 'Carro';
-      this.origen = null;
+      this.posicion = null;
       this.navCtrl.push('ListMasterPage');
     }
+  }
 
+  showToast(message: string) {
+    let toast = this.toastCtrl.create({
+      message: message,
+      duration: 2000,
+      position: 'top'
+    });
+    toast.present(toast);
+  }
+
+  // Método para obtener la ruta a seguir desde origen a destino, no aplica por le momento para la aplicación
+  calculateAndDisplayRoute(origen, destino) {
+    console.log('calculateAndDisplayRoute origen', JSON.stringify(origen));
+    console.log('calculateAndDisplayRoute destino', JSON.stringify(destino));
+    this.mapService.calculateRute(origen, destino)
+      .subscribe(result => {
+        console.log('result form api servicec', JSON.stringify(result));
+      });
   }
 
 

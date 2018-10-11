@@ -1,5 +1,6 @@
 <ion-header>
   <ion-navbar color="dark">
+    <!-- Imprimo estado solo para ayuda en desarrollo...  -->
     <ion-title>Elegir {{selectPoint}} {{estado}}</ion-title>
   </ion-navbar>
 </ion-header>
@@ -15,6 +16,7 @@
       </ion-fab-list>
     </ion-fab>
     
+    <!-- Pasar este input al ion-header, muestra solo si estamos en el paso de elegir destino -->
     <ion-list *ngIf="elegirDestino">
       <ion-item>
         <input type="text" ion-input #address class="text-input text-input-md" >

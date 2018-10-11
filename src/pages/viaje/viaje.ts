@@ -18,13 +18,6 @@ import {
 } from '@ionic-native/google-maps';
 
 
-/**
- * Generated class for the ViajePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
 @IonicPage()
 @Component({
   selector: 'page-viaje',
@@ -68,9 +61,11 @@ export class ViajePage {
       content: 'Por favor espera...'
     });
 
-
     this.settings.load().then(() => {
+
+      // Obtengo del Localstorage los settings
       console.log('storage allSettings', this.settings.allSettings);
+
       let allSettings = this.settings.allSettings;
       this.storageOrigen = allSettings.origen;
       this.storageDestino = allSettings.destino;
@@ -80,12 +75,7 @@ export class ViajePage {
       this.condPic = allSettings.carro.profilePic;
       this.condAbout = allSettings.carro.about;
 
-      this.origLat = allSettings.origen.lat;
-      this.origLng = allSettings.origen.lng;
       this.origAddress = allSettings.origen.address;
-
-      this.destLat = allSettings.destino.lat;
-      this.destLng = allSettings.destino.lng;
       this.destAddress = allSettings.destino.address;
     });
 
@@ -106,7 +96,6 @@ export class ViajePage {
   }
 
   iniciarViaje() {
-
     let toast = this.toastCtrl.create({
       message: 'Tu viaje ha comenzado, espera la llegada del carro a tu ubicación origen',
       duration: 4000,
@@ -116,7 +105,8 @@ export class ViajePage {
     toast.present(toast);
     toast.dismiss();
 
-   this.appCtrl.getRootNav().setRoot('MapPage', {'estado': 'HaciaOrigenx'});
+    // Envía a mapa con un estado HaciaOrigen para detectar este paso
+   this.appCtrl.getRootNav().setRoot('MapPage', {'estado': 'HaciaOrigen'});
   }
 
 }

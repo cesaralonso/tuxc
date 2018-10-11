@@ -21,6 +21,8 @@ export class MapService {
 
     calculateRute(origen, destino) {
 
+        // Intento usar esta API para poder calcular la ruta que debe seguir pero está fallando, no es importante para la aplicación por el momento
+
         let _url = `${this.actionUrl}?units=metric&origin=${origen}&destination=${destino}&key=AIzaSyBo6eHESsdXqn5ilr7iRr2C4BfcmFJeuO4`;
         console.log('_url', _url);
         return this.http.get<any>(_url, this.httpOptions)
@@ -28,8 +30,7 @@ export class MapService {
                 map(response => response),
                 catchError(this.handleError),
                 tap((response: any) => {
-
-                    console.log('tap response',JSON.stringify(response));
+                    console.log('calculateRute response',JSON.stringify(response));
                     return response;
                 }) 
             );
