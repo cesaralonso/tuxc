@@ -1,30 +1,37 @@
 <ion-header>
   <ion-navbar color="dark">
-    <!-- Imprimo estado solo para ayuda en desarrollo...  -->
-    <ion-title>Elegir {{selectPoint}} {{estado}}</ion-title>
+    <ion-title>{{selectPoint}}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
   <div id="map_canvas" #map_canvas>
 
-    <ion-fab right bottom>
-      <button ion-fab color="light"><ion-icon name="arrow-dropleft"></ion-icon></button>
-      <ion-fab-list side="left">
-        <button ion-fab (click)="onFindLocation()" *ngIf="!elegirDestino"><ion-icon name="pin"></ion-icon></button>
-        <button ion-fab (click)="setUbicacion()"><ion-icon name="checkmark-circle"></ion-icon></button>
-      </ion-fab-list>
+    <ion-fab right bottom *ngIf="!elegirDestino">
+      <button ion-fab color="light" (click)="onFindLocation()" *ngIf="!elegirDestino"><ion-icon name="locate"></ion-icon></button>
     </ion-fab>
-    
-    <!-- Pasar este input al ion-header, muestra solo si estamos en el paso de elegir destino -->
-    <ion-list *ngIf="elegirDestino">
-      <ion-item>
-        <input type="text" ion-input #address class="text-input text-input-md" >
-      </ion-item>
-      <ion-item>
-        <button ion-button block (click)="onEstablishAddress($event)">Buscar</button>
-      </ion-item>
-    </ion-list>
+
+    <ion-fab left bottom *ngIf="!elegirDestino && !destinoElegido && located">
+      <button ion-fab (click)="setUbicacion()"><ion-icon name="checkmark-circle"></ion-icon></button>
+    </ion-fab>
 
   </div>
 </ion-content>
+
+<ion-footer *ngIf="elegirDestino">
+
+  <ion-toolbar *ngIf="!destinoElegido">
+    <input type="text" placeholder="Dirección destino" ion-input #address class="text-input text-input-md" >
+    <ion-buttons end>
+      <button ion-button icon-end color="royal" (click)="onEstablishAddress($event)">
+        Buscar
+        <ion-icon name="search"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar *ngIf="destinoElegido">
+    <button ion-button block (click)="setUbicacion()">PEDIR CARRO AHORA</button>
+  </ion-toolbar>
+
+</ion-footer>

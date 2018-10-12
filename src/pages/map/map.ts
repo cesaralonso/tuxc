@@ -36,16 +36,19 @@ export class MapPage {
   _destino: ILatLng;
   dataStorage: any = {};
 
+  located: boolean = false;
   elegirDestino: boolean = false;
-  posicionSeteado: boolean = false;
+  destinoElegido: boolean = false;
+
+  origenSeteado: boolean = false;
   destinoSeteado: boolean = false;
 
   selectPoint: string = 'Origen';
+  estado: string = 'Inicia';
 
   _strAddressDestino: any = '';
   _strAddressOrigen: any = '';
 
-  estado: string = 'Inicia';
 
   @ViewChild('address', { read: ElementRef}) 
   address: ElementRef;
@@ -58,43 +61,35 @@ export class MapPage {
     private settings: Settings,
     private mapService: MapService) {
     
-      if (this.posicionSeteado && !this.destinoSeteado) {
-        this.selectPoint = 'Destino';
-      }
-
-      if (this.posicionSeteado && this.destinoSeteado) {
-        this.selectPoint = 'Finalizado';
-      }
-
       this.estado = 'Selecciona';
       
+      // Para controlar los estados cuando viene desde otra pantalla
       if (this.navParams.get('estado')) {
-      this.estado = this.navParams.get('estado');
-      console.log('estado', this.estado);
-    }
+        this.estado = this.navParams.get('estado');
+
+        // Estado cuando usuario ha iniciado el viaje
+        if (this.estado === 'HaciaOrigen') {
+          this.selectPoint = 'Carro en camino hacia ti';
+        }
+        console.log('estado', this.estado);
+      }
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad');
     this.loading_wait = this.loadingCtrl.create({
       content: 'Por favor espera...'
     })
   }
 
   ionViewDidEnter() {
-    console.log('ionViewDidEnter this.map', this.map);
     this.loadMap();
-  }
-
-  ionViewDidLeave() {
-    console.log('ionViewDidLeave');
   }
 
   loadMap() {
     let mapOptions: GoogleMapOptions = {
       'controls': {
         'compass': false,
-        'myLocationButton': true,
+        'myLocationButton': false,
         'myLocation': true,
         'indoorPicker': false,
         'zoom': false,
@@ -114,79 +109,8 @@ export class MapPage {
     this.map = GoogleMaps.create('map_canvas', mapOptions);
   }
 
-  // Establece una dirección de destino despues de haber ya posicionado un origen
-  onEstablishAddress(event) {
-    // Presenta loading
-    this.loading_wait.present();
-    // Limpia Mapa
-    this.map.clear();
-
-    // Address -> latitude, longitude
-    // Toma el valor del input de la vista para sacar la información de la dirección
-    Geocoder.geocode({
-      "address": this.address.nativeElement.value
-    })
-    .then((results: GeocoderResult[]) => {
-
-      if (results.length == 0) {
-        // Not found
-        return null;
-      }
-
-      // Cierra el loading
-      this.loading_wait.dismiss();
-
-      // latLng destino
-      this._destino = results[0].position;
-
-      // Cadena con la dirección completa de destino
-      this._strAddressDestino = [
-        results[0].subThoroughfare || "",
-        results[0].thoroughfare || "",
-        results[0].locality || "",
-        results[0].adminArea || "",
-        results[0].postalCode || "",
-        results[0].country || ""].join(", ");
-
-      // POLYLINE solo de prueba, no se incluirá en la aplicación
-      const ORIGEN = {'lat': this._origen.lat, 'lng': this._origen.lng};
-      const DESTINO =  {'lat': this._destino.lat, 'lng': this._destino.lng};
-      const RUTA = [
-        ORIGEN,
-        DESTINO
-      ];
-      let polyline: Polyline = this.map.addPolylineSync({
-        points: RUTA,
-        color: '#AA00FF',
-        width: 10,
-        geodesic: true,
-        clickable: true  // clickable = false in default
-      });
-      polyline.on(GoogleMapsEvent.POLYLINE_CLICK).subscribe((params: any) => {
-        let position: LatLng = <LatLng>params[0];
-        let marker: Marker = this.map.addMarkerSync({
-          position: position,
-          title: position.toUrlValue(),
-          disableAutoPan: true,
-          snippet: this._strAddressDestino,
-          animation: GoogleMapsAnimation.BOUNCE
-        });
-        marker.showInfoWindow();
-      });
-
-      // Esto es para mandar a función para obtener la ruta a seguir, por el momento no se va a utilizar..
-      const DIR_ORIGEN = this._strAddressOrigen;
-      const DIR_DESTINO = this._strAddressDestino;
-      this.calculateAndDisplayRoute(DIR_ORIGEN, DIR_DESTINO);
-
-      this.posicion = results[0].position;
-    });
-  }
-
   // Posiciona la posición de origen
   onFindLocation(e) {
-    // Presenta loading
-    this.loading_wait.present();
     // Limpia Mapa
     this.map.clear();
 
@@ -211,9 +135,6 @@ export class MapPage {
          * "status":true
          * }
          */
-
-        // Cierra loading
-        this.loading_wait.dismiss();
 
         // Move the map camera to the location with animation
         this.map.animateCamera({
@@ -264,73 +185,139 @@ export class MapPage {
 
               // show the infoWindow
               marker.showInfoWindow();
+              this.located = true;
 
               // If clicked it, display the alert
               marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-                this.showToast('Esta es la tu ubicación');
+                this.showToast('Esta es tu ubicación de origen');
               });
             });
         });
       });
   }
 
+  // Establece una dirección de destino despues de haber ya posicionado un origen
+  onEstablishAddress(event) {
+    // Presenta loading
+    this.loading_wait.present();
+    // Limpia Mapa
+    this.map.clear();
+
+    // Address -> latitude, longitude
+    // Toma el valor del input de la vista para sacar la información de la dirección
+    Geocoder.geocode({
+      "address": this.address.nativeElement.value
+    })
+    .then((results: GeocoderResult[]) => {
+
+      if (results.length == 0) {
+        // Not found
+        return null;
+      }
+
+      // Cierra el loading
+      this.loading_wait.dismiss();
+
+      // latLng destino
+      this._destino = results[0].position;
+
+      // Cadena con la dirección completa de destino
+      this._strAddressDestino = [
+        results[0].subThoroughfare || "",
+        results[0].thoroughfare || "",
+        results[0].locality || "",
+        results[0].adminArea || "",
+        results[0].postalCode || "",
+        results[0].country || ""].join(", ");
+
+      // POLYLINE solo de prueba por ahora, no se incluirá en la aplicación como tal si no un trazado de rutas, pero para una segunda versión
+      const ORIGEN = {'lat': this._origen.lat, 'lng': this._origen.lng};
+      const DESTINO =  {'lat': this._destino.lat, 'lng': this._destino.lng};
+      const RUTA = [
+        ORIGEN,
+        DESTINO
+      ];
+      let polyline: Polyline = this.map.addPolylineSync({
+        points: RUTA,
+        color: '#AA00FF',
+        width: 10,
+        geodesic: true,
+        clickable: true  // clickable = false in default
+      });
+      polyline.on(GoogleMapsEvent.POLYLINE_CLICK).subscribe((params: any) => {
+        let position: LatLng = <LatLng>params[0];
+        let marker: Marker = this.map.addMarkerSync({
+          position: position,
+          title: position.toUrlValue(),
+          disableAutoPan: true,
+          snippet: this._strAddressDestino,
+          animation: GoogleMapsAnimation.BOUNCE
+        });
+        marker.showInfoWindow();
+      });
+
+      // Esto es para mandar a función para obtener la ruta a seguir, por el momento no se va a utilizar..
+      const DIR_ORIGEN = this._strAddressOrigen;
+      const DIR_DESTINO = this._strAddressDestino;
+      this.calculateAndDisplayRoute(DIR_ORIGEN, DIR_DESTINO);
+
+      // Se guarda la posición
+      this.posicion = results[0].position;
+
+      // Para quitar de la vista el search input
+      this.destinoElegido = true;
+    });
+  }
+
   setUbicacion() {
     // Limpia Mapa
     this.map.clear();
 
-    if (!this.posicionSeteado) {
+    if (!this.origenSeteado) {
 
       // Origen
-      this.loading = this.loadingCtrl.create({
-        content: 'Ahora elige el destino'
-      });
-      this.loading.present();
-      this.loading.dismiss();
+      this.showToast('Ahora elige el destino');
+
       this.selectPoint = 'Destino';
       this.elegirDestino = true;
 
       if (this.posicion !== undefined) {
         this.posicion['address'] = this._strAddressOrigen;
         this._strAddressOrigen = '';
+        
+        // Guarda en LocalStorage
         this.settings.setValue('origen', this.posicion);
-        this.posicionSeteado = true;
+
+        this.origenSeteado = true;
         this.posicion = null;
       } else {
         console.log('Error al setear origen');
       }
 
-    } else if (this.posicionSeteado && !this.destinoSeteado) {
+    } else if (this.origenSeteado && !this.destinoSeteado) {
 
       // Destino
-      this.loading = this.loadingCtrl.create({
-        content: 'Ahora elige un carro'
-      });
-      this.loading.present();
-      this.loading.dismiss();
+      this.showToast('Origen y destino seleccionados');
+
       this.selectPoint = 'Carro';
 
       if (this.posicion !== undefined) {
         this.posicion['address'] = this._strAddressDestino;
         this._strAddressDestino = '';
+
+        // Guarda en LocalStorage
         this.settings.setValue('destino', this.posicion);
+
         this.destinoSeteado = true;
         this.posicion = null;
-        this.navCtrl.push('ListMasterPage');
+
+        // Seteado Origen y Destino envía a pantalla de Selección de EligeCarroPage
+        // Aqui es el momento para iniciar comunicacion usuario - chofer
+        this.navCtrl.push('ItemDetailPage');
+
       } else {
         console.log('Error al setear destino');
       }
-    } else if (this.posicionSeteado && this.destinoSeteado) {
-
-      // Seteado Origen y Destino envía a pantalla de Selección de EligeCarroPage
-      // Aqui es el momento para enviar a Firebase
-      this.loading = this.loadingCtrl.create({
-        content: 'Solo elige un carro'
-      });
-      this.loading.present();
-      this.loading.dismiss();
-      this.selectPoint = 'Carro';
-      this.posicion = null;
-      this.navCtrl.push('ListMasterPage');
     }
   }
 
