@@ -6,6 +6,6 @@ export const FirstRunPage = 'WelcomePage';
 export const MainPage = 'TabsPage';
 
 // The initial root pages for our tabs (remove if not using tabs)
-export const Tab1Root = 'ViajePage';
+export const Tab1Root = 'TravelPage';
 export const Tab2Root = 'DriverDetailPage';
 export const Tab3Root = 'SettingsPage';

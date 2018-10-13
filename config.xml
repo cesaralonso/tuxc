@@ -3,7 +3,7 @@
     <name>tuxcar</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.1.68:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -104,6 +104,6 @@
     <allow-navigation href="http://:8101" />
     <allow-navigation href="http://192.168.1.68:8101" />
     <allow-navigation href="http://192.168.1.68:8103" />
-    <engine name="android" spec="7.0.0" />
     <allow-navigation href="http://192.168.1.76:8100" />
+    <engine name="android" spec="7.0.0" />
 </widget>
