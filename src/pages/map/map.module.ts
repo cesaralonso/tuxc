@@ -1,4 +1,3 @@
-import { MapService } from './map.service';
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { MapPage } from './map';
@@ -11,7 +10,6 @@ import { MapPage } from './map';
     IonicPageModule.forChild(MapPage),
   ],
   providers: [
-    MapService
   ]
 })
 export class MapPageModule {}

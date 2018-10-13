@@ -20,7 +20,7 @@
       <h2>Conductor</h2>
     </ion-item>
     <ion-item-sliding>
-      <button ion-item (click)="goTo('ListMasterPage')">
+      <button ion-item (click)="goTo('DriverMasterPage')">
         <ion-avatar item-start>
           <img [src]="'../../' + condPic" />
         </ion-avatar>
@@ -33,11 +33,6 @@
           <img src="../../assets/imgs/bg-car2.jpg">
         </ion-thumbnail>
       </button>
-      <ion-item-options>
-        <button ion-button (click)="iniciarViaje()">
-          REPORTAR
-        </button>
-      </ion-item-options>
     </ion-item-sliding>
     
 
@@ -59,7 +54,9 @@
 
   </ion-list>
   
+  <!--Misma vista para chofer, para usuario mostrará botón de Inicial viaje y cancelar-->
   <button ion-button block  (click)="iniciarViaje()">Iniciar Viaje</button>
+  <!--Esta es la misma vista para el chofer la cual mostrará el botón de cobrar y cancelar-->
   <button ion-button color="default" block>Cobrar</button>
-  <button ion-button color="danger" (click)="goTo('MapPage')" block>Cancelar / Rechazar</button>
+  <button ion-button color="danger" (click)="goTo('WelcomePage')" block>Cancelar / Rechazar</button>
 </ion-content>

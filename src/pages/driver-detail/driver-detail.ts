@@ -2,25 +2,29 @@ import { Settings } from './../../providers/settings/settings';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
 
-import { Items } from '../../providers';
 
 @IonicPage()
 @Component({
-  selector: 'page-item-detail',
-  templateUrl: 'item-detail.html'
+  selector: 'page-driver-detail',
+  templateUrl: 'driver-detail.html'
 })
-export class ItemDetailPage {
+export class DriverDetailPage {
   item: any;
 
   constructor(
     public navCtrl: NavController, 
     navParams: NavParams, 
-    items: Items,
     private settings: Settings,
     public loadingCtrl: LoadingController) {
 
     this.presentLoading();
-    this.item = navParams.get('item') || items.defaultItem;
+
+    // Aqui se supone que ya obtiene el carro que ha aceptado
+    this.item = {
+        "name": "Pedro García Pérez",
+        "profilePic": "assets/img/conductor1.png",
+        "about": "Excelente conductor."
+    };
   }
 
   presentLoading() {
@@ -33,7 +37,7 @@ export class ItemDetailPage {
 
   setCarro(item: any) {
     this.settings.setValue('carro', item);
-    this.navCtrl.push('ViajePage');
+    this.navCtrl.push('TravelPage');
   }
 
 }

@@ -33,20 +33,12 @@ export class MyApp {
 
   pages: any[] = [
     { title: 'Tutorial', component: 'TutorialPage' },
-    { title: 'Welcome', component: 'WelcomePage' },
+    { title: 'Inicio', component: 'WelcomePage' },
     { title: 'Viaje', component: 'ViajePage' },
     { title: 'Elige Carro', component: 'EligeCarroPage' },
-    { title: 'Mapa Origen', component: 'MapPage' },
-    { title: 'Mapa Destino', component: 'MapDestinoPage' },
+    { title: 'Origen Destino', component: 'MapPage' },
     { title: 'Tabs', component: 'TabsPage' },
-    { title: 'Cards', component: 'CardsPage' },
-    { title: 'Content', component: 'ContentPage' },
-    { title: 'Login', component: 'LoginPage' },
-    { title: 'Signup', component: 'SignupPage' },
-    { title: 'Master Detail', component: 'ListMasterPage' },
-    { title: 'Menu', component: 'MenuPage' },
-    { title: 'Settings', component: 'SettingsPage' },
-    { title: 'Search', component: 'SearchPage' }
+    { title: 'Settings', component: 'SettingsPage' }
   ]
 
   constructor(private translate: TranslateService, platform: Platform, settings: Settings, private config: Config, private statusBar: StatusBar, private splashScreen: SplashScreen) {

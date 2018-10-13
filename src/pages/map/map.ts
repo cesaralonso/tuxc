@@ -1,5 +1,3 @@
-import { EligeCarroPage } from './../elige-carro/elige-carro';
-import { MapService } from './map.service';
 import { Settings } from './../../providers/settings/settings';
 import {
   GoogleMaps,
@@ -18,7 +16,7 @@ import {
   Polyline
 } from '@ionic-native/google-maps';
 import { Component, ViewChild, ElementRef } from "@angular/core/";
-import { IonicPage, NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
+import { App, IonicPage, NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
 
 
 @IonicPage()
@@ -59,7 +57,7 @@ export class MapPage {
     public loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private settings: Settings,
-    private mapService: MapService) {
+    public appCtrl: App) {
     
       this.estado = 'Selecciona';
       
@@ -172,14 +170,14 @@ export class MapPage {
               // origen es establecido con la posición (coordenada)
               this.posicion = location.latLng;
 
-              // latLng origen
+              // latLng origen para Polyline
               this._origen =  location.latLng;
 
               // add a marker
               let marker: Marker = this.map.addMarkerSync({
                 title: 'Tu te encuentras aquí',
                 snippet: this._strAddressOrigen,
-                position: this._origen,
+                position: this.posicion,
                 animation: GoogleMapsAnimation.BOUNCE
               });
 
@@ -218,7 +216,7 @@ export class MapPage {
       // Cierra el loading
       this.loading_wait.dismiss();
 
-      // latLng destino
+      // latLng destino para Polyline
       this._destino = results[0].position;
 
       // Cadena con la dirección completa de destino
@@ -256,10 +254,6 @@ export class MapPage {
         marker.showInfoWindow();
       });
 
-      // Esto es para mandar a función para obtener la ruta a seguir, por el momento no se va a utilizar..
-      const DIR_ORIGEN = this._strAddressOrigen;
-      const DIR_DESTINO = this._strAddressDestino;
-      this.calculateAndDisplayRoute(DIR_ORIGEN, DIR_DESTINO);
 
       // Se guarda la posición
       this.posicion = results[0].position;
@@ -312,8 +306,9 @@ export class MapPage {
         this.posicion = null;
 
         // Seteado Origen y Destino envía a pantalla de Selección de EligeCarroPage
-        // Aqui es el momento para iniciar comunicacion usuario - chofer
-        this.navCtrl.push('ItemDetailPage');
+        // Aqui es el momento para iniciar comunicacion usuario - chofer.
+        // Pasar a vista DriverDetailPage como una página root
+        this.appCtrl.getRootNav().setRoot('DriverDetailPage');
 
       } else {
         console.log('Error al setear destino');
@@ -329,17 +324,6 @@ export class MapPage {
     });
     toast.present(toast);
   }
-
-  // Método para obtener la ruta a seguir desde origen a destino, no aplica por le momento para la aplicación
-  calculateAndDisplayRoute(origen, destino) {
-    console.log('calculateAndDisplayRoute origen', JSON.stringify(origen));
-    console.log('calculateAndDisplayRoute destino', JSON.stringify(destino));
-    this.mapService.calculateRute(origen, destino)
-      .subscribe(result => {
-        console.log('result form api servicec', JSON.stringify(result));
-      });
-  }
-
 
 }
 

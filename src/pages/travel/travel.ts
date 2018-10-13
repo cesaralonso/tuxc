@@ -20,28 +20,19 @@ import {
 
 @IonicPage()
 @Component({
-  selector: 'page-viaje',
-  templateUrl: 'viaje.html',
+  selector: 'page-travel',
+  templateUrl: 'travel.html',
 })
-export class ViajePage {
+export class TravelPage {
 
   map: GoogleMap;
   loading_wait: any;
-
-  storageOrigen: ILatLng;
-  storageDestino: ILatLng;
-  storageCarro: ILatLng;
 
   condName: string;
   condPic: string;
   condAbout: string;
 
-  origLat: string;
-  origLng: string;
   origAddress: string;
-
-  destLat: string;
-  destLng: string;
   destAddress: string;
 
 
@@ -51,7 +42,7 @@ export class ViajePage {
     public loadingCtrl: LoadingController, 
     private toastCtrl: ToastController,
     private settings: Settings,
-      public appCtrl: App
+    public appCtrl: App
   ) {
   }
 
@@ -64,12 +55,8 @@ export class ViajePage {
     this.settings.load().then(() => {
 
       // Obtengo del Localstorage los settings
-      console.log('storage allSettings', this.settings.allSettings);
-
       let allSettings = this.settings.allSettings;
-      this.storageOrigen = allSettings.origen;
-      this.storageDestino = allSettings.destino;
-      this.storageCarro = allSettings.carro;
+      console.log('storage allSettings', this.settings.allSettings);
 
       this.condName = allSettings.carro.name;
       this.condPic = allSettings.carro.profilePic;

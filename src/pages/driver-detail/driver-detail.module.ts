@@ -2,18 +2,18 @@ import { NgModule } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { IonicPageModule } from 'ionic-angular';
 
-import { MenuPage } from './menu';
+import { DriverDetailPage } from './driver-detail';
 
 @NgModule({
   declarations: [
-    MenuPage,
+    DriverDetailPage,
   ],
   imports: [
-    IonicPageModule.forChild(MenuPage),
+    IonicPageModule.forChild(DriverDetailPage),
     TranslateModule.forChild()
   ],
   exports: [
-    MenuPage
+    DriverDetailPage
   ]
 })
-export class MenuPageModule { }
+export class DriverDetailPageModule { }

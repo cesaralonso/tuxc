@@ -7,18 +7,18 @@
 <ion-content>
   <div id="map_canvas" #map_canvas>
 
-    <ion-fab right bottom *ngIf="!elegirDestino">
+    <ion-fab right bottom *ngIf="!elegirDestino && estado !== 'HaciaOrigen'">
       <button ion-fab color="light" (click)="onFindLocation()" *ngIf="!elegirDestino"><ion-icon name="locate"></ion-icon></button>
     </ion-fab>
 
-    <ion-fab left bottom *ngIf="!elegirDestino && !destinoElegido && located">
+    <ion-fab left bottom *ngIf="!elegirDestino && !destinoElegido && located && estado !== 'HaciaOrigen'">
       <button ion-fab (click)="setUbicacion()"><ion-icon name="checkmark-circle"></ion-icon></button>
     </ion-fab>
 
   </div>
 </ion-content>
 
-<ion-footer *ngIf="elegirDestino">
+<ion-footer *ngIf="elegirDestino && estado !== 'HaciaOrigen'">
 
   <ion-toolbar *ngIf="!destinoElegido">
     <input type="text" placeholder="Dirección destino" ion-input #address class="text-input text-input-md" >
